@@ -7,9 +7,9 @@ users = 0
 instructionBuffer = [];
 controllerImage = ""
 
-codeToSend = """
-function hello():
-	alert(hi);
+codeToSend = """//script
+function hello(){
+	alert('hi');}
 	"""
 
 hostname = gethostname()
@@ -21,6 +21,8 @@ class Replier(protocol.Protocol):
     	print data
     	if data == 'whoami':
     		self.transport.write('{"host": "'+hostname+'"}');
+    	elif data == 'gimmiescripts':
+    		self.transport.write(codeToSend);
     	else:
 	    	global instructionBuffer
 	        datadict = eval(data)

