@@ -1,6 +1,6 @@
-<doctype html>
+<!DOCTYPE html>
 <html>
-<header>
+<head>
 <title>MobileGamepad Demo Page!</title>
 <script src="JS/Gameside.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -12,9 +12,9 @@ function press(event){
 }
 
 </script>
-</header>
-<body onload="press('test')">
+</head>
+<body onload="openSockets()">
 
-<input type=button onclick="start()" value="Generate QR"/>
+<input id="QRButt" type=button onclick="start()" value="Generate QR" disabled=true/>
 </body>
 </html>

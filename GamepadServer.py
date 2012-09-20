@@ -11,7 +11,7 @@ codeToSend = open('JS/Padside.js','r').read();
 
 hostname = gethostname()
 
-
+print hostname
 
 class Replier(protocol.Protocol):
     def dataReceived(self, data):
