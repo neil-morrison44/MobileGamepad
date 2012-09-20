@@ -7,10 +7,7 @@ users = 0
 instructionBuffer = [];
 controllerImage = ""
 
-codeToSend = """//script
-function hello(){
-	alert('hi');}
-	"""
+codeToSend = open('JS/Padside.js','r').read();
 
 hostname = gethostname()
 
@@ -22,6 +19,7 @@ class Replier(protocol.Protocol):
     	if data == 'whoami':
     		self.transport.write('{"host": "'+hostname+'"}');
     	elif data == 'gimmiescripts':
+    		codeToSend = open('JS/Padside.js','r').read();
     		self.transport.write(codeToSend);
     	else:
 	    	global instructionBuffer
