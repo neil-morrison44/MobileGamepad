@@ -11,7 +11,7 @@ function addScript(script){
 	document.getElementsByTagName("head")[0].appendChild(ns);}
 var s = new WebSocket('ws://'+hostname+':8080/');
 s.onopen = function(){s.send('gimmiescripts');}
-s.onmessage = function(event){console.log(event);if (event.data.substr(0,8) == "//script"){addScript(event.data);hello();}}
+s.onmessage = function(event){if (event.data.substr(0,8) == "//script"){addScript(event.data);hello();}}
 </script>
 </head>
 <body>

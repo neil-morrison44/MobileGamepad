@@ -16,6 +16,17 @@ function drawControls(){
 				drawDPAD(screen.height/5,screen.width/2);
 			}
 		}
+		else if (key == "RIGHT"){
+			if (controlSetup[key] instanceof Array){
+				
+				var butts = controlSetup[key];
+				for (var i = 0;i < butts.length;i++){
+					//alert('hi butt'+butts[i]);
+					drawButton(screen.height*(0.9-(i/5)),screen.width*(0.4+(i/5)),butts[i]);
+				}
+				
+			}
+		}
 	}
 	addListenersToCanvas();
 }
@@ -59,38 +70,59 @@ function drawDPAD(x,y){
 	
 }
 
+function drawButton(x,y,name){
+	ctx.save();
+	ctx.beginPath();
+	ctx.fillStyle = "red";
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = "20";
+	ctx.lineJoin = "round";
+	ctx.arc(x, y, 30, 0, Math.PI*2, true); 
+	ctx.closePath();
+	ctx.stroke();
+	ctx.fill();
+	ctx.fillStyle = "white";
+	ctx.font = "Bold 40px Copperplate";
+	ctx.fillText(name,x-15,y+8);
+	ctx.restore();
+	buttons.push(buildRange(name,x-20,y-20,x+20,y+20,60));
+}
+
 var ctx;
 
 function touchDown(event){
-		event.preventDefault();
-		var touch = event.changedTouches[0];
-		for(var i = 0; i < buttons.length;i++){
-			if(buttons[i].isin(touch.pageX,touch.pageY)){				
-				s.send('{"mode":"update","' +buttons[i].name+'":"PRESSED"}');
-			}
+	event.preventDefault();
+	var touch = event.changedTouches[0];
+	for(var i = 0; i < buttons.length;i++){
+		if(buttons[i].isin(touch.pageX,touch.pageY)){
+						
+			s.send('{"mode":"update","' +buttons[i].name+'":"PRESSED"}');
+			i = buttons.length;	
 		}
+	}
 }
 
 function touchMove(event){
 	//if the changed touches is still in the button limits do nothing	
 }
 function touchUp(event){
-		event.preventDefault();
-		var touch = event.changedTouches[0];
-		for(var i = 0; i < buttons.length;i++){
-			if(buttons[i].isin(touch.pageX,touch.pageY)){			
-				s.send('{"mode":"update","' +buttons[i].name+'":"RELEASED"}');
-			}
+	event.preventDefault();
+	var touch = event.changedTouches[0];
+	for(var i = 0; i < buttons.length;i++){
+		if(buttons[i].isin(touch.pageX,touch.pageY)){			
+			s.send('{"mode":"update","' +buttons[i].name+'":"RELEASED"}');
+			i = buttons.length;
 		}
+	}
 }
 
 function addListenersToCanvas(){
-	alert('added');
+	//alert('added');
 	window.addEventListener("touchstart",touchDown,false);
 	window.addEventListener("touchend",touchUp,false);
-		}
+	}
 
-var controlSetup = {"LEFT":"DPAD","RIGHT":{"A":"BUTTON","B":"BUTTON"}}; //standard NES - start and select
+var controlSetup = {"LEFT":"DPAD","RIGHT":["A","B"]}; //standard NES - start and select
 function addCanvas(){
 	canvas = document.createElement('canvas');
 	canvas.id = "cntcnv";

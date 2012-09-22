@@ -27,7 +27,7 @@ function setupSocket(){
 	};
 	
 	socket.onmessage = function (event) {
-		console.log(event);
+		console.log(event.data);
 		var datadict = JSON.parse(event.data);
 		if (datadict['host']){
 			hostname = datadict['host'];
