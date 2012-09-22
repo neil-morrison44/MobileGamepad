@@ -15,7 +15,7 @@ print hostname
 
 class Replier(protocol.Protocol):
     def dataReceived(self, data):
-    	print data
+    	
     	if data == 'whoami':
     		self.transport.write('{"host": "'+hostname+'"}');
     	elif data == 'gimmiescripts':
@@ -25,11 +25,16 @@ class Replier(protocol.Protocol):
 	    	global instructionBuffer
 	        datadict = eval(data)
 	        if datadict['mode'] == 'read':
-	        	self.transport.write(instructionBuffer)
+	        	for instruction in instructionBuffer:
+	        		self.transport.write('{"update":'+str(instruction).replace("'",'"')+'}')
+	        	
 	        	instructionBuffer = []
 	        if datadict['mode'] == 'update':
-	            instructionBuffer += datadict['updates']
-	            self.transport.write("ok")
+	        	print data
+	        	del datadict['mode']
+	        	instructionBuffer += [datadict]
+	        	
+
 
 class Factory(protocol.Factory):
     def buildProtocol(self, addr):

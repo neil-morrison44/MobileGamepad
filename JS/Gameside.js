@@ -9,14 +9,21 @@ function openSockets(){
 	setupSocket();
 	}
 	
-function startGamepad(){
-	
+function startCheckingUpdates(){
+	var updater = window.setInterval(getUpdates,20);
 }
 
+function getUpdates(){
+	socket.send('{"mode":"read"}');
+}
+var instructionBuffer = [];
+
 var socket;
+
 function setupSocket(){
 	socket.onopen = function () {
 	    socket.send('whoami');
+	    
 	};
 	
 	socket.onmessage = function (event) {
@@ -25,6 +32,10 @@ function setupSocket(){
 		if (datadict['host']){
 			hostname = datadict['host'];
 			document.getElementById('QRButt').disabled = false;
+			startCheckingUpdates();
+		}
+		else if (datadict['update']){
+			console.log(datadict['update']);
 		}
 	
 	    

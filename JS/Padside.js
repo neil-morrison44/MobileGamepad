@@ -1,30 +1,104 @@
 //script
 var inputbuffer = [];
+var canvas;
 function hello(){
-	alert('hello beautiful');
+	//alert('hello beautiful');
+	window.scrollTo(0,0);
 	}
 	
 function drawControls(){
-	alert('TBC');
+	//alert('TBC');
+	var x = 0;
+	var y = 0;
+	for(var key in controlSetup){
+		if (key == "LEFT"){
+			if (controlSetup[key] == "DPAD"){
+				drawDPAD(screen.height/5,screen.width/2);
+			}
+		}
+	}
+	addListenersToCanvas();
 }
+var buttons = [];
 
+function buildRange(name,x1,y1,x2,y2){
+	var range = {'name':name,'x1':x1,'y1':y1,'x2':x2,'y2':y2};
+	range['isin'] = function(x,y){
+		return((x >= x1 && x <= x2)&&(y >= y1 && y <= y2));
+	}
+	range['distFromC'] = function(x,y){
+		var midx = (x1+x2)/2;
+		var midy = (y1+y2)/2;
+		var dist = [0,0];
+		dist[0] = (midx+x)/2;
+		dist[1] = (midy+y)/2;
+		return dist;
+	}
+	return range;
+}
+function drawDPAD(x,y){
+	ctx.save();
+	var bw = 18;
+	var bl = 150;
+	ctx.fillStyle = "gray";
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = "20";
+	ctx.lineJoin = "round";
+	ctx.strokeRect(x-bw,y-(bl/2),(bw*2),bl);
+	ctx.strokeRect(x-(bl/2),y-bw,bl,(bw*2));
+	
+	ctx.fillRect(x-bw,y-(bl/2),(bw*2),bl);
+	ctx.fillRect(x-(bl/2),y-bw,bl,(bw*2));
+	ctx.restore();
+	
+	buttons.push(buildRange('UP',x-bw,y-(bl/2),x+(bw),y));
+	buttons.push(buildRange('DOWN',x-bw,y,x+(bw),y+(bl/2)));
+	
+	buttons.push(buildRange('LEFT',x-(bl/2),y-bw,x,y+bw));
+	buttons.push(buildRange('RIGHT',x,y-bw,x+bl,y+(bw)));
+	
+}
 
 var ctx;
 
+function touchDown(event){
+		event.preventDefault();
+		var touch = event.changedTouches[0];
+		for(var i = 0; i < buttons.length;i++){
+			if(buttons[i].isin(touch.pageX,touch.pageY)){				
+				s.send('{"mode":"update","' +buttons[i].name+'":"PRESSED"}');
+			}
+		}
+}
 
+function touchMove(event){
+	//if the changed touches is still in the button limits do nothing	
+}
+function touchUp(event){
+		event.preventDefault();
+		var touch = event.changedTouches[0];
+		for(var i = 0; i < buttons.length;i++){
+			if(buttons[i].isin(touch.pageX,touch.pageY)){			
+				s.send('{"mode":"update","' +buttons[i].name+'":"RELEASED"}');
+			}
+		}
+}
 
+function addListenersToCanvas(){
+	alert('added');
+	window.addEventListener("touchstart",touchDown,false);
+	window.addEventListener("touchend",touchUp,false);
+		}
 
-var controlsetup = {"LEFT":"DPAD","RIGHT":{"A":"BUTTON","B:BUTTON"}};
+var controlSetup = {"LEFT":"DPAD","RIGHT":{"A":"BUTTON","B":"BUTTON"}}; //standard NES - start and select
 function addCanvas(){
-	var canvas = document.createElement('canvas');
+	canvas = document.createElement('canvas');
 	canvas.id = "cntcnv";
 	canvas.width = window.innerWidth;
 	canvas.height = window.outerHeight;
 	canvas.style.position = "absolute";
 	canvas.style.top = 0;
 	canvas.style.left = 0;
-	canvas.style.borderStyle = "solid";
-	canvas.style.borderColor = "blue";
 	document.getElementsByTagName('body')[0].appendChild(canvas);
 	ctx = canvas.getContext('2d');
 }
@@ -81,7 +155,7 @@ function addWarning(text){
 	warning.id = warning;
 	warning.style.margin = 'auto';
 	warning.style.display = 'block';
-	warning.style.marginTop = '25%';
+	warning.style.marginTop = '20%';
 	warning.style.paddingTop = '10%';
 	warning.style.paddingBottom = '10%';
 	warning.style.height = '25%';
